@@ -1,62 +1,99 @@
-import React from 'react'
+import React from "react";
 
-const FilterableProductTable = () => {
+const FilterableProductTable = ({products}) => {
   return (
     <>
-    <SearchBar />
-    <div>.....</div>
-    <ProductTable />
+      <SearchBar />
+      <ProductTable products = {products} />
     </>
-  )
-}
+  );
+};
 
 const SearchBar = () => {
   return(
-    <>
-    <div>Search...</div>
-    <div>Only show products in stock</div>
-    </>
+    <form>
+      <input type = "text" placeholder="Search..." ></input>
+      <label>
+        <input type = "checkbox"></input>
+        {' '}
+        Only show products in stock
+      </label>
+    </form>
   );
-}
+};
 
-const ProductTable = () => {
-  return(
-    <>
-    <div>Name Price</div>
-    <div>....</div>
-    <ProductCategoryRow />
-    <ProductRow />
-    </>
+const ProductTable = ({products}) => {
+  const rows = [];
+  let lastCategory = null;
+
+  products.forEach((product) => {
+    if(lastCategory !== product.category){
+      rows.push(
+        <ProductCategoryRow category = {product.category} key = {product.category} />
+      );
+    }
+
+    rows.push(
+      <ProductRow product = {product} key = {product.name} />
+    );
+
+    lastCategory = product.category;
+  })
+
+  return (
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Price</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {rows}
+      </tbody>
+    </table>
   );
-}
+};
 
-const ProductCategoryRow = () => {
-  return(
-    <>
-    <div>Fruits</div>
-    <div>..........</div>
-    </>
+const ProductCategoryRow = ({ category }) => {
+  return (
+    <tr>
+      <th colSpan="2">{category}</th>
+    </tr>
   );
-}
+};
 
-const ProductRow = () => {
-  return(
-    <>
-    <div>Apple 1$</div>
-    <div>Dragonfruit 1$</div>
-    <div>Passionfruit 1$</div>
-    </>
+const ProductRow = ({ product }) => {
+  // const price = product.price;
+  const name = product.stocked ? (
+    product.name
+  ) : (
+    <span style={{ color: "red" }}>{product.name}</span>
   );
-}
+  return (
+      <tr>
+        <td>{name}</td>
+        <td>{product.price}</td>
+      </tr>
+  );
+};
 
-const products = [
+const PRODUCTS = [
   { category: "Fruits", price: "$1", stocked: true, name: "Apple" },
   { category: "Fruits", price: "$1", stocked: true, name: "Dragonfruit" },
   { category: "Fruits", price: "$2", stocked: false, name: "Passionfruit" },
   { category: "Vegetables", price: "$2", stocked: true, name: "Spinach" },
   { category: "Vegetables", price: "$4", stocked: false, name: "Pumpkin" },
-  { category: "Vegetables", price: "$1", stocked: true, name: "Peas" }
+  { category: "Vegetables", price: "$1", stocked: true, name: "Peas" },
 ];
 
+const App = () => {
+  return <FilterableProductTable products={PRODUCTS} />;
+};
 
-export default FilterableProductTable;
+
+
+export default App;
+//can I have the same export in multiple files
+//
